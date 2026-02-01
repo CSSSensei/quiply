@@ -20,26 +20,26 @@ git pull origin main
 echo "Building Docker images..."
 docker-compose -f docker-compose.prod.yml build --no-cache
 
-echo "🛑 Stopping existing containers..."
+echo "Stopping existing containers..."
 docker-compose -f docker-compose.prod.yml down
 
-echo "🚀 Starting services..."
+echo "Starting services..."
 docker-compose -f docker-compose.prod.yml up -d
 
-echo "⏳ Waiting for database to be ready..."
+echo "Waiting for database to be ready..."
 sleep 10
 
-echo "🗄️  Running database migrations..."
-docker-compose -f docker-compose.prod.yml exec -T backend flask db upgrade || \
-docker-compose -f docker-compose.prod.yml exec -T backend python init_db.py
+echo "Running database migrations..."
+docker compose -f docker-compose.prod.yml exec -T backend flask db upgrade || \
+docker compose -f docker-compose.prod.yml exec -T backend python init_db.py
 
 echo "Deployment completed successfully!"
 echo ""
 echo "Service status:"
-docker-compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml ps
 
 echo ""
 echo "To view logs:"
-echo "  docker-compose -f docker-compose.prod.yml logs -f"
+echo "  docker compose -f docker-compose.prod.yml logs -f"
 echo ""
 echo "API should be available at: https://${DOMAIN}"

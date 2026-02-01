@@ -19,7 +19,7 @@ BACKUP_FILE="${BACKUP_DIR}/quiply_db_${TIMESTAMP}.sql"
 
 echo "Backing up database to: $BACKUP_FILE"
 
-docker-compose -f docker-compose.prod.yml exec -T db pg_dump \
+docker compose -f docker compose.prod.yml exec -T db pg_dump \
     -U $POSTGRES_USER \
     -d $POSTGRES_DB \
     > $BACKUP_FILE
