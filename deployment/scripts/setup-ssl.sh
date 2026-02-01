@@ -38,7 +38,7 @@ echo "Waiting for nginx to start..."
 sleep 5
 
 echo "Requesting SSL certificate from Let's Encrypt..."
-docker compose -f docker-compose.prod.yml run --rm certbot certonly \
+docker compose -f docker-compose.prod.yml run --rm --entrypoint certbot certbot certonly \
     --webroot \
     --webroot-path=/var/www/certbot \
     --email $EMAIL \
@@ -67,7 +67,7 @@ docker compose -f docker-compose.prod.yml restart nginx
 echo "SSL certificate setup completed!"
 echo ""
 echo "Certificate details:"
-docker compose -f docker-compose.prod.yml run --rm certbot certificates
+docker compose -f docker-compose.prod.yml run --rm --entrypoint certbot certbot certificates
 
 echo ""
 echo "Certificate will auto-renew via certbot container"
