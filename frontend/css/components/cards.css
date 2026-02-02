@@ -1,0 +1,167 @@
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.card-body {
+  padding: var(--spacing-lg);
+}
+
+/* Quip Card */
+.quip-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+  transition: all var(--transition-fast);
+}
+
+.quip-card:hover {
+  border-color: var(--text-tertiary);
+}
+
+.quip-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.quip-delete-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  opacity: 0.5;
+  transition: opacity var(--transition-fast);
+  padding: var(--spacing-xs);
+}
+
+.quip-delete-btn:hover {
+  opacity: 1;
+}
+
+.quip-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: white;
+  flex-shrink: 0;
+}
+
+.quip-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.quip-author {
+  font-weight: 600;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.quip-author:hover {
+  text-decoration: underline;
+}
+
+.quip-time {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+}
+
+.quip-content {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+  word-wrap: break-word;
+}
+
+.quip-definition {
+  padding: var(--spacing-md);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.quip-definition-label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-xs);
+}
+
+.quip-definition-text {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.quip-examples {
+  padding: var(--spacing-md);
+  background: var(--bg-secondary);
+  border-left: 3px solid var(--accent-purple);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  margin-bottom: var(--spacing-md);
+}
+
+.quip-examples-label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-xs);
+}
+
+.quip-examples-text {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.quip-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--divider-color);
+}
+
+.quip-action {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.quip-action:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.quip-action.active {
+  color: var(--accent-magenta);
+}
+
+.quip-action-icon {
+  font-size: 18px;
+}
