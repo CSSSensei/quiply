@@ -5,7 +5,10 @@ class Router {
     this.beforeHooks = [];
 
     window.addEventListener("hashchange", () => this.handleRoute());
-    window.addEventListener("load", () => this.handleRoute());
+  }
+
+  start() {
+    this.handleRoute();
   }
 
   addRoute(path, handler) {

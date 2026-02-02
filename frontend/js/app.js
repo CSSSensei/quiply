@@ -20,6 +20,7 @@ class App {
     this.initRouter();
     this.render();
     this.setupEventListeners();
+    router.start();
   }
 
   initTheme() {
