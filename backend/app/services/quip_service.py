@@ -29,6 +29,17 @@ class QuipService:
         return Quip.query.get(quip_id)
     
     @staticmethod
+    def delete(user_id: int, quip_id: int) -> None:
+        quip = Quip.query.get(quip_id)
+        if not quip:
+            raise ValueError("Quip not found")
+        if quip.user_id != user_id:
+            raise ValueError("Not authorized to delete this quip")
+        
+        db.session.delete(quip)
+        db.session.commit()
+    
+    @staticmethod
     def get_feed(sort: str = "smart", page: int = 1, per_page: int = 20) -> list[Quip]:
         return Quip.query.order_by(desc(Quip.created_at)).paginate(
             page=page, per_page=per_page, error_out=False
@@ -66,6 +77,15 @@ class QuipService:
         db.session.commit()
         
         return repost
+    
+    @staticmethod
+    def remove_repost(user_id: int, quip_id: int) -> None:
+        repost = Repost.query.filter_by(user_id=user_id, quip_id=quip_id).first()
+        if not repost:
+            raise ValueError("Not reposted")
+        
+        db.session.delete(repost)
+        db.session.commit()
     
     @staticmethod
     def get_user_quips(username: str, page: int = 1, per_page: int = 20) -> list[Quip]:

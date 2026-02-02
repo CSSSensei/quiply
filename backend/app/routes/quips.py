@@ -74,6 +74,18 @@ def get_quip(quip_id: int):
     }), 200
 
 
+@bp.route("/<int:quip_id>", methods=["DELETE"])
+@jwt_required()
+def delete_quip(quip_id: int):
+    user_id = int(get_jwt_identity())
+    
+    try:
+        QuipService.delete(user_id, quip_id)
+        return jsonify({"message": "Quip deleted successfully"}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+
 @bp.route("/<int:quip_id>/up", methods=["POST"])
 @jwt_required()
 def add_quip_up(quip_id: int):
@@ -106,5 +118,17 @@ def add_repost(quip_id: int):
     try:
         QuipService.add_repost(user_id, quip_id)
         return jsonify({"message": "Reposted successfully"}), 201
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@bp.route("/<int:quip_id>/repost", methods=["DELETE"])
+@jwt_required()
+def remove_repost(quip_id: int):
+    user_id = int(get_jwt_identity())
+    
+    try:
+        QuipService.remove_repost(user_id, quip_id)
+        return jsonify({"message": "Repost removed successfully"}), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 400

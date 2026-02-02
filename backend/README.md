@@ -246,6 +246,27 @@ Base URL: `/api/v1`
 
 ---
 
+#### `DELETE /quips/:id` 🔒
+
+Удалить quip. Только автор может удалить свой quip.
+
+**Response 200:**
+```json
+{"message": "Quip deleted successfully"}
+```
+
+**Response 400:**
+```json
+{"error": "Not authorized to delete this quip"}
+```
+
+**Response 404:**
+```json
+{"error": "Quip not found"}
+```
+
+---
+
 #### `POST /quips/:id/repost` 🔒
 
 Репостнуть quip.
@@ -258,6 +279,22 @@ Base URL: `/api/v1`
 **Response 400:**
 ```json
 {"error": "Already reposted"}
+```
+
+---
+
+#### `DELETE /quips/:id/repost` 🔒
+
+Убрать репост.
+
+**Response 200:**
+```json
+{"message": "Repost removed successfully"}
+```
+
+**Response 400:**
+```json
+{"error": "Not reposted"}
 ```
 
 ---
