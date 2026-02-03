@@ -44,6 +44,7 @@ def create_quip():
         return jsonify({
             "id": quip.id,
             "user_id": quip.user_id,
+            "username": quip.author.username,
             "content": quip.content,
             "definition": quip.definition,
             "usage_examples": quip.usage_examples,
