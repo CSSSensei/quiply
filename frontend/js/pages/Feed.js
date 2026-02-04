@@ -20,16 +20,14 @@ export class FeedPage {
     this.quips = [];
     this.hasMore = true;
     this.loading = true;
-    // Don't call update() here - element is already rendered
-    // Just load data and then update
     await this.loadQuips();
   }
 
   async loadQuips() {
 
     try {
-      const data = await api.getQuips(this.sort, this.page);
-      const newQuips = Array.isArray(data) ? data : (data.quips || []);
+      const response = await api.getQuips(this.sort, this.page);
+      const newQuips = Array.isArray(response) ? response : (response.data || []);
 
       if (this.page === 1) {
         this.quips = newQuips;

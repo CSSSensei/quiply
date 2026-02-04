@@ -97,8 +97,8 @@ export class LoginPage {
 
     try {
       await api.login(this.username, this.password);
-      const userData = await api.getMe();
-      state.setUser(userData);
+      const response = await api.getMe();
+      state.setUser(response.data);
       showToast("Welcome back!", "success");
       router.navigate("/");
     } catch (err) {

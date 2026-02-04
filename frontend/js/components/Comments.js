@@ -17,8 +17,8 @@ export class Comments {
 
   async load() {
     try {
-      const data = await api.getComments(this.quipId);
-      this.comments = Array.isArray(data) ? data : (data.comments || []);
+      const response = await api.getComments(this.quipId);
+      this.comments = Array.isArray(response) ? response : (response.data || []);
     } catch (err) {
       showToast(err.message, "error");
     } finally {
@@ -223,13 +223,13 @@ export class Comments {
     if (!this.newComment.trim()) return;
 
     try {
-      const comment = await api.createComment(
+      const response = await api.createComment(
         this.quipId,
         this.newComment.trim(),
         this.replyTo
       );
 
-      this.comments.push(comment);
+      this.comments.push(response.data);
       this.newComment = "";
       this.replyTo = null;
       showToast("Comment posted!", "success");

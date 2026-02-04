@@ -16,7 +16,23 @@ python run.py  # :5001
 
 Base URL: `/api/v1`
 
-Все ответы в JSON. Ошибки: `{"error": "message"}`.
+Все ответы в JSON. Успешные ответы имеют структуру:
+```json
+{
+  "success": true,
+  "data": { ... },
+  "message": "Optional success message"
+}
+```
+
+Ошибки:
+```json
+{
+  "success": false,
+  "error_code": "ERROR_CODE",
+  "message": "Error description"
+}
+```
 
 Авторизация: `Authorization: Bearer <token>`
 
@@ -31,11 +47,14 @@ Base URL: `/api/v1`
 **Response 200:**
 ```json
 {
-  "name": "Quiply API",
-  "version": "1.0.0",
-  "status": "running",
-  "timestamp": "2026-02-01T18:00:00.000000",
-  "endpoints": { ... }
+  "success": true,
+  "data": {
+    "name": "Quiply API",
+    "version": "1.0.0",
+    "status": "running",
+    "timestamp": "2026-02-01T18:00:00.000000",
+    "endpoints": { ... }
+  }
 }
 ```
 
@@ -46,9 +65,12 @@ Base URL: `/api/v1`
 **Response 200:**
 ```json
 {
-  "status": "ok",
-  "database": "healthy",
-  "timestamp": "2026-02-01T18:00:00.000000"
+  "success": true,
+  "data": {
+    "status": "ok",
+    "database": "healthy",
+    "timestamp": "2026-02-01T18:00:00.000000"
+  }
 }
 ```
 
@@ -72,15 +94,23 @@ Base URL: `/api/v1`
 **Response 201:**
 ```json
 {
-  "id": 1,
-  "username": "johndoe",
-  "email": "john@example.com"
+  "success": true,
+  "data": {
+    "id": 1,
+    "username": "johndoe",
+    "email": "john@example.com"
+  },
+  "message": "User registered successfully"
 }
 ```
 
 **Response 400:**
 ```json
-{"error": "Username already exists"}
+{
+  "success": false,
+  "error_code": "CONFLICT",
+  "message": "Username already exists"
+}
 ```
 
 ---
@@ -100,13 +130,21 @@ Base URL: `/api/v1`
 **Response 200:**
 ```json
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  "success": true,
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  },
+  "message": "Login successful"
 }
 ```
 
 **Response 401:**
 ```json
-{"error": "Invalid credentials"}
+{
+  "success": false,
+  "error_code": "AUTHENTICATION_ERROR",
+  "message": "Invalid credentials"
+}
 ```
 
 ---
@@ -118,11 +156,14 @@ Base URL: `/api/v1`
 **Response 200:**
 ```json
 {
-  "id": 1,
-  "username": "johndoe",
-  "email": "john@example.com",
-  "bio": "Документирую цитаты деда",
-  "created_at": "2026-02-01T12:00:00.000000"
+  "success": true,
+  "data": {
+    "id": 1,
+    "username": "johndoe",
+    "email": "john@example.com",
+    "bio": "Документирую цитаты деда",
+    "created_at": "2026-02-01T12:00:00.000000"
+  }
 }
 ```
 
@@ -140,20 +181,23 @@ Base URL: `/api/v1`
 
 **Response 200:**
 ```json
-[
-  {
-    "id": 1,
-    "user_id": 1,
-    "username": "johndoe",
-    "content": "Интересно девки пляшут",
-    "definition": "Реакция на какое-либо событие: восторг, недоумение, ужас, несогласие или радость",
-    "usage_examples": "Кот орёт, чтобы его выпустили, выходит… и тут же орёт, чтобы впустили обратно",
-    "created_at": "2026-02-01T15:30:00.000000",
-    "quip_ups_count": 42,
-    "comments_count": 5,
-    "reposts_count": 3
-  }
-]
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "username": "johndoe",
+      "content": "Интересно девки пляшут",
+      "definition": "Реакция на какое-либо событие: восторг, недоумение, ужас, несогласие или радость",
+      "usage_examples": "Кот орёт, чтобы его выпустили, выходит… и тут же орёт, чтобы впустили обратно",
+      "created_at": "2026-02-01T15:30:00.000000",
+      "quip_ups_count": 42,
+      "comments_count": 5,
+      "reposts_count": 3
+    }
+  ]
+}
 ```
 
 ---
@@ -176,12 +220,16 @@ Base URL: `/api/v1`
 **Response 201:**
 ```json
 {
-  "id": 2,
-  "user_id": 1,
-  "content": "Тише едешь — дальше будешь",
-  "definition": "Спешка вредит делу",
-  "usage_examples": "Когда торопишься и делаешь ошибки",
-  "created_at": "2026-02-01T16:00:00.000000"
+  "success": true,
+  "data": {
+    "id": 2,
+    "user_id": 1,
+    "content": "Тише едешь — дальше будешь",
+    "definition": "Спешка вредит делу",
+    "usage_examples": "Когда торопишься и делаешь ошибки",
+    "created_at": "2026-02-01T16:00:00.000000"
+  },
+  "message": "Quip created successfully"
 }
 ```
 
@@ -194,22 +242,29 @@ Base URL: `/api/v1`
 **Response 200:**
 ```json
 {
-  "id": 1,
-  "user_id": 1,
-  "username": "johndoe",
-  "content": "Не все то золото, что блестит",
-  "definition": "Внешность может быть обманчива",
-  "usage_examples": "Когда видишь красивую упаковку",
-  "created_at": "2026-02-01T15:30:00.000000",
-  "quip_ups_count": 42,
-  "comments_count": 5,
-  "reposts_count": 3
+  "success": true,
+  "data": {
+    "id": 1,
+    "user_id": 1,
+    "username": "johndoe",
+    "content": "Не все то золото, что блестит",
+    "definition": "Внешность может быть обманчива",
+    "usage_examples": "Когда видишь красивую упаковку",
+    "created_at": "2026-02-01T15:30:00.000000",
+    "quip_ups_count": 42,
+    "comments_count": 5,
+    "reposts_count": 3
+  }
 }
 ```
 
 **Response 404:**
 ```json
-{"error": "Quip not found"}
+{
+  "success": false,
+  "error_code": "NOT_FOUND",
+  "message": "Quip not found"
+}
 ```
 
 ---
@@ -220,12 +275,19 @@ Base URL: `/api/v1`
 
 **Response 201:**
 ```json
-{"message": "Upvoted successfully"}
+{
+  "success": true,
+  "message": "Upvoted successfully"
+}
 ```
 
 **Response 400:**
 ```json
-{"error": "Already upvoted"}
+{
+  "success": false,
+  "error_code": "VALIDATION_ERROR",
+  "message": "Already upvoted"
+}
 ```
 
 ---
@@ -236,12 +298,19 @@ Base URL: `/api/v1`
 
 **Response 200:**
 ```json
-{"message": "Upvote removed successfully"}
+{
+  "success": true,
+  "message": "Upvote removed successfully"
+}
 ```
 
 **Response 400:**
 ```json
-{"error": "Not upvoted"}
+{
+  "success": false,
+  "error_code": "VALIDATION_ERROR",
+  "message": "Not upvoted"
+}
 ```
 
 ---
@@ -252,17 +321,28 @@ Base URL: `/api/v1`
 
 **Response 200:**
 ```json
-{"message": "Quip deleted successfully"}
+{
+  "success": true,
+  "message": "Quip deleted successfully"
+}
 ```
 
 **Response 400:**
 ```json
-{"error": "Not authorized to delete this quip"}
+{
+  "success": false,
+  "error_code": "AUTHORIZATION_ERROR",
+  "message": "Not authorized to delete this quip"
+}
 ```
 
 **Response 404:**
 ```json
-{"error": "Quip not found"}
+{
+  "success": false,
+  "error_code": "NOT_FOUND",
+  "message": "Quip not found"
+}
 ```
 
 ---
@@ -273,12 +353,19 @@ Base URL: `/api/v1`
 
 **Response 201:**
 ```json
-{"message": "Reposted successfully"}
+{
+  "success": true,
+  "message": "Reposted successfully"
+}
 ```
 
 **Response 400:**
 ```json
-{"error": "Already reposted"}
+{
+  "success": false,
+  "error_code": "VALIDATION_ERROR",
+  "message": "Already reposted"
+}
 ```
 
 ---
@@ -289,12 +376,19 @@ Base URL: `/api/v1`
 
 **Response 200:**
 ```json
-{"message": "Repost removed successfully"}
+{
+  "success": true,
+  "message": "Repost removed successfully"
+}
 ```
 
 **Response 400:**
 ```json
-{"error": "Not reposted"}
+{
+  "success": false,
+  "error_code": "VALIDATION_ERROR",
+  "message": "Not reposted"
+}
 ```
 
 ---
@@ -307,27 +401,30 @@ Base URL: `/api/v1`
 
 **Response 200:**
 ```json
-[
-  {
-    "id": 1,
-    "user_id": 1,
-    "username": "johndoe",
-    "content": "Отличная поговорка!",
-    "created_at": "2026-02-01T16:30:00.000000",
-    "comment_ups_count": 5,
-    "replies": [
-      {
-        "id": 2,
-        "user_id": 2,
-        "username": "jane",
-        "content": "Согласна!",
-        "created_at": "2026-02-01T16:35:00.000000",
-        "comment_ups_count": 2,
-        "replies": []
-      }
-    ]
-  }
-]
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "username": "johndoe",
+      "content": "Отличная поговорка!",
+      "created_at": "2026-02-01T16:30:00.000000",
+      "comment_ups_count": 5,
+      "replies": [
+        {
+          "id": 2,
+          "user_id": 2,
+          "username": "jane",
+          "content": "Согласна!",
+          "created_at": "2026-02-01T16:35:00.000000",
+          "comment_ups_count": 2,
+          "replies": []
+        }
+      ]
+    }
+  ]
+}
 ```
 
 ---
@@ -349,12 +446,16 @@ Base URL: `/api/v1`
 **Response 201:**
 ```json
 {
-  "id": 3,
-  "user_id": 1,
-  "quip_id": 1,
-  "parent_comment_id": null,
-  "content": "Классная цитата!",
-  "created_at": "2026-02-01T17:00:00.000000"
+  "success": true,
+  "data": {
+    "id": 3,
+    "user_id": 1,
+    "quip_id": 1,
+    "parent_comment_id": null,
+    "content": "Классная цитата!",
+    "created_at": "2026-02-01T17:00:00.000000"
+  },
+  "message": "Comment created successfully"
 }
 ```
 
@@ -366,7 +467,10 @@ Base URL: `/api/v1`
 
 **Response 201:**
 ```json
-{"message": "Upvoted successfully"}
+{
+  "success": true,
+  "message": "Upvoted successfully"
+}
 ```
 
 ---
@@ -377,7 +481,10 @@ Base URL: `/api/v1`
 
 **Response 200:**
 ```json
-{"message": "Upvote removed successfully"}
+{
+  "success": true,
+  "message": "Upvote removed successfully"
+}
 ```
 
 ---
@@ -391,33 +498,40 @@ Base URL: `/api/v1`
 **Response 200:**
 ```json
 {
-  "id": 1,
-  "username": "johndoe",
-  "bio": "Люблю хорошие цитаты",
-  "created_at": "2026-02-01T12:00:00.000000",
-  "stats": {
-    "total_quips": 15,
-    "total_quip_ups": 234,
-    "total_reposts": 45
-  },
-  "top_quips": [
-    {
-      "id": 1,
-      "content": "Не все то золото, что блестит",
-      "quip_ups_count": 42
+  "success": true,
+  "data": {
+    "id": 1,
+    "username": "johndoe",
+    "bio": "Люблю хорошие цитаты",
+    "created_at": "2026-02-01T12:00:00.000000",
+    "stats": {
+      "total_quips": 15,
+      "total_quip_ups": 234,
+      "total_reposts": 45
     },
-    {
-      "id": 5,
-      "content": "Тише едешь — дальше будешь",
-      "quip_ups_count": 38
-    }
-  ]
+    "top_quips": [
+      {
+        "id": 1,
+        "content": "Не все то золото, что блестит",
+        "quip_ups_count": 42
+      },
+      {
+        "id": 5,
+        "content": "Тише едешь — дальше будешь",
+        "quip_ups_count": 38
+      }
+    ]
+  }
 }
 ```
 
 **Response 404:**
 ```json
-{"error": "User not found"}
+{
+  "success": false,
+  "error_code": "NOT_FOUND",
+  "message": "User not found"
+}
 ```
 
 ---
@@ -431,20 +545,23 @@ Quips пользователя.
 
 **Response 200:**
 ```json
-[
-  {
-    "id": 1,
-    "user_id": 1,
-    "username": "johndoe",
-    "content": "Не все то золото, что блестит",
-    "definition": "Внешность может быть обманчива",
-    "usage_examples": null,
-    "created_at": "2026-02-01T15:30:00.000000",
-    "quip_ups_count": 42,
-    "comments_count": 5,
-    "reposts_count": 3
-  }
-]
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "username": "johndoe",
+      "content": "Не все то золото, что блестит",
+      "definition": "Внешность может быть обманчива",
+      "usage_examples": null,
+      "created_at": "2026-02-01T15:30:00.000000",
+      "quip_ups_count": 42,
+      "comments_count": 5,
+      "reposts_count": 3
+    }
+  ]
+}
 ```
 
 ---
@@ -458,20 +575,23 @@ Quips пользователя.
 
 **Response 200:**
 ```json
-[
-  {
-    "id": 10,
-    "user_id": 2,
-    "username": "jane",
-    "content": "Семь раз отмерь, один раз отрежь",
-    "definition": null,
-    "usage_examples": null,
-    "created_at": "2026-02-01T14:00:00.000000",
-    "quip_ups_count": 28,
-    "comments_count": 3,
-    "reposts_count": 7
-  }
-]
+{
+  "success": true,
+  "data": [
+    {
+      "id": 10,
+      "user_id": 2,
+      "username": "jane",
+      "content": "Семь раз отмерь, один раз отрежь",
+      "definition": null,
+      "usage_examples": null,
+      "created_at": "2026-02-01T14:00:00.000000",
+      "quip_ups_count": 28,
+      "comments_count": 3,
+      "reposts_count": 7
+    }
+  ]
+}
 ```
 
 ---

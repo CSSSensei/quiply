@@ -143,7 +143,7 @@ export class CreateQuip {
     this.update();
 
     try {
-      const quip = await api.createQuip(
+      const response = await api.createQuip(
         this.content.trim(),
         this.definition.trim() || null,
         this.examples.trim() || null
@@ -157,7 +157,7 @@ export class CreateQuip {
       showToast("Quip posted!", "success");
 
       if (this.onCreated) {
-        this.onCreated(quip);
+        this.onCreated(response.data);
       }
     } catch (err) {
       showToast(err.message, "error");

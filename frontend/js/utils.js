@@ -21,6 +21,7 @@ export function escapeHtml(text) {
 }
 
 export function getInitials(username) {
+  if (!username) return '?';
   return username.charAt(0).toUpperCase();
 }
 

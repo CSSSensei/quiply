@@ -16,8 +16,8 @@ export class QuipDetailPage {
     this.update();
 
     try {
-      const data = await api.getQuip(params.id);
-      this.quip = data;
+      const response = await api.getQuip(params.id);
+      this.quip = response.data;
       this.comments = new Comments(params.id);
       this.comments.load();
     } catch (err) {

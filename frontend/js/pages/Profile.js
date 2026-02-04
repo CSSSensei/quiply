@@ -18,15 +18,15 @@ export class ProfilePage {
     this.update();
 
     try {
-      const [userData, quipsData, repostsData] = await Promise.all([
+      const [userResponse, quipsResponse, repostsResponse] = await Promise.all([
         api.getUser(params.username),
         api.getUserQuips(params.username),
         api.getUserReposts(params.username),
       ]);
 
-      this.user = userData;
-      this.quips = Array.isArray(quipsData) ? quipsData : (quipsData.quips || []);
-      this.reposts = Array.isArray(repostsData) ? repostsData : (repostsData.quips || []);
+      this.user = userResponse.data;
+      this.quips = Array.isArray(quipsResponse) ? quipsResponse : (quipsResponse.data || []);
+      this.reposts = Array.isArray(repostsResponse) ? repostsResponse : (repostsResponse.data || []);
     } catch (err) {
       showToast(err.message, "error");
     } finally {

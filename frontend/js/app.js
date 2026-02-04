@@ -32,8 +32,8 @@ class App {
   async initAuth() {
     if (api.token) {
       try {
-        const userData = await api.getMe();
-        state.setUser(userData);
+        const response = await api.getMe();
+        state.setUser(response.data);
       } catch {
         api.setToken(null);
       }
