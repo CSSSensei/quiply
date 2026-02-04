@@ -1,8 +1,11 @@
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
+
+RUN echo "Acquire::Check-Valid-Until false;" > /etc/apt/apt.conf.d/99no-check-valid-until \
+    && echo "Acquire::Check-Date false;" >> /etc/apt/apt.conf.d/99no-check-valid-until
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
@@ -13,15 +16,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 COPY requirements.prod.txt .
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements.prod.txt
+RUN pip install --no-cache-dir --upgrade pip --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org \
+    && pip install --no-cache-dir -r requirements.prod.txt --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org
 
-FROM python:3.11-slim as production
+FROM python:3.11-slim AS production
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV FLASK_ENV=production
+
+RUN echo "Acquire::Check-Valid-Until false;" > /etc/apt/apt.conf.d/99no-check-valid-until \
+    && echo "Acquire::Check-Date false;" >> /etc/apt/apt.conf.d/99no-check-valid-until
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     postgresql-client \

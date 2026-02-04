@@ -28,11 +28,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-      # Enable build cache for faster rebuilds
-      cache_from:
-        - quiply_backend_dev:latest
-      args:
-        - BUILDKIT_INLINE_CACHE=1
     image: quiply_backend_dev:latest
     container_name: quiply_backend
     environment:

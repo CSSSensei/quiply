@@ -14,14 +14,27 @@ fi
 
 source .env
 
+export DOCKER_BUILDKIT=1
+export BUILDKIT_PROGRESS=plain
+
 echo "Pulling latest changes..."
 git pull origin main
 
-echo "Building Docker images..."
-docker compose -f docker-compose.prod.yml build --no-cache
+echo "Pruning unused Docker resources..."
+docker system prune -f
+docker volume prune -f
+
+echo "Building Docker images with optimizations..."
+
+docker compose -f docker-compose.prod.yml build \
+    --parallel \
+    --progress=plain \
+    --no-cache
 
 echo "Stopping existing containers..."
 docker compose -f docker-compose.prod.yml down
+
+docker network prune -f
 
 echo "Starting services..."
 docker compose -f docker-compose.prod.yml up -d
@@ -39,7 +52,15 @@ echo "Service status:"
 docker compose -f docker-compose.prod.yml ps
 
 echo ""
+echo "Container health status:"
+docker compose -f docker-compose.prod.yml ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
+
+echo ""
 echo "To view logs:"
 echo "  docker compose -f docker-compose.prod.yml logs -f"
 echo ""
 echo "API should be available at: https://${DOMAIN}"
+
+echo ""
+echo "Resource usage:"
+docker stats --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}\t{{.BlockIO}}"
