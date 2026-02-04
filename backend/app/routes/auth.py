@@ -1,8 +1,10 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services.auth_service import AuthService
 from app.schemas import UserRegistrationSchema, UserLoginSchema, UserUpdateSchema
-from pydantic import ValidationError
+from app.utils.response import APIResponse
+from app.utils.errors import ValidationError, AuthenticationError, NotFoundError
+from pydantic import ValidationError as PydanticValidationError
 
 bp = Blueprint("auth", __name__)
 
@@ -16,18 +18,25 @@ def register():
         username = validated_data.username
         email = validated_data.email
         password = validated_data.password
-    except ValidationError as e:
-        return jsonify({"error": "Validation failed", "details": e.errors()}), 400
+    except PydanticValidationError as e:
+        raise ValidationError("Validation failed", details={"validation_errors": e.errors()})
     
     try:
         user = AuthService.register(username, email, password)
-        return jsonify({
-            "id": user.id,
-            "username": user.username,
-            "email": user.email
-        }), 201
+        return APIResponse.success(
+            data={
+                "id": user.id,
+                "username": user.username,
+                "email": user.email
+            },
+            message="User registered successfully",
+            status_code=201
+        )
     except ValueError as e:
-        return jsonify({"error": str(e)}), 400
+        if "already exists" in str(e):
+            from app.utils.errors import ConflictError
+            raise ConflictError(str(e))
+        raise ValidationError(str(e))
 
 
 @bp.route("/login", methods=["POST"])
@@ -38,14 +47,17 @@ def login():
         validated_data = UserLoginSchema(**data)
         username = validated_data.username
         password = validated_data.password
-    except ValidationError as e:
-        return jsonify({"error": "Validation failed", "details": e.errors()}), 400
+    except PydanticValidationError as e:
+        raise ValidationError("Validation failed", details={"validation_errors": e.errors()})
     
     try:
         token = AuthService.login(username, password)
-        return jsonify({"token": token}), 200
+        return APIResponse.success(
+            data={"token": token},
+            message="Login successful"
+        )
     except ValueError as e:
-        return jsonify({"error": str(e)}), 401
+        raise AuthenticationError(str(e))
 
 
 @bp.route("/me", methods=["GET"])
@@ -55,15 +67,17 @@ def get_current_user():
     user = AuthService.get_user_by_id(user_id)
     
     if not user:
-        return jsonify({"error": "User not found"}), 404
+        raise NotFoundError("User not found")
     
-    return jsonify({
-        "id": user.id,
-        "username": user.username,
-        "email": user.email,
-        "bio": user.bio,
-        "created_at": user.created_at.isoformat()
-    }), 200
+    return APIResponse.success(
+        data={
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "bio": user.bio,
+            "created_at": user.created_at.isoformat()
+        }
+    )
 
 
 @bp.route("/me", methods=["PUT"])
@@ -75,17 +89,20 @@ def update_current_user():
     try:
         validated_data = UserUpdateSchema(**data)
         bio = validated_data.bio
-    except ValidationError as e:
-        return jsonify({"error": "Validation failed", "details": e.errors()}), 400
+    except PydanticValidationError as e:
+        raise ValidationError("Validation failed", details={"validation_errors": e.errors()})
     
     try:
         user = AuthService.update_user(user_id, bio)
-        return jsonify({
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "bio": user.bio,
-            "created_at": user.created_at.isoformat()
-        }), 200
+        return APIResponse.success(
+            data={
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "bio": user.bio,
+                "created_at": user.created_at.isoformat()
+            },
+            message="Profile updated successfully"
+        )
     except ValueError as e:
-        return jsonify({"error": str(e)}), 400
+        raise ValidationError(str(e))
