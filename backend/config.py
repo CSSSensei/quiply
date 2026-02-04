@@ -12,13 +12,20 @@ class Config:
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "jwt-secret-key-change-in-production")
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=24)
 
+    LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+    LOG_FILE = os.getenv("LOG_FILE", None)
+    LOG_DIR = os.getenv("LOG_DIR", "logs")
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    LOG_LEVEL = "DEBUG"
 
 
 class ProductionConfig(Config):
     DEBUG = False
+    LOG_LEVEL = "INFO"
+    LOG_FILE = "quiply.log"
 
 
 config = {

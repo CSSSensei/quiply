@@ -3,21 +3,29 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager, get_jwt_identity
 from flask_cors import CORS
+from typing import Optional
 
 from config import config
 from app.utils.errors import BaseAPIError
 from app.utils.response import APIResponse
 from app.utils.logger import setup_logger, log_error
+import logging
 
 db = SQLAlchemy()
 migrate = Migrate()
 jwt = JWTManager()
-logger = setup_logger()
+logger: Optional[logging.Logger] = None  # Will be initialized after app creation
 
 
 def create_app(config_name: str = "default") -> Flask:
     app = Flask(__name__)
     app.config.from_object(config[config_name])
+    
+    global logger
+    logger = setup_logger(
+        app_name='quiply',
+        log_level=app.config.get('LOG_LEVEL', 'INFO')
+    )
     
     db.init_app(app)
     migrate.init_app(app, db)
@@ -36,7 +44,8 @@ def create_app(config_name: str = "default") -> Flask:
     
     @app.errorhandler(BaseAPIError)
     def handle_api_error(error):
-        log_error(logger, error)
+        if logger:
+            log_error(logger, error)
         return APIResponse.error(
             message=error.message,
             status_code=error.status_code,
@@ -54,7 +63,8 @@ def create_app(config_name: str = "default") -> Flask:
     
     @app.errorhandler(500)
     def handle_internal_error(error):
-        log_error(logger, error, {"original_error": str(error)})
+        if logger:
+            log_error(logger, error, {"original_error": str(error)})
         return APIResponse.error(
             message="Internal server error",
             status_code=500,
@@ -63,7 +73,8 @@ def create_app(config_name: str = "default") -> Flask:
     
     @app.errorhandler(Exception)
     def handle_unexpected_error(error):
-        log_error(logger, error, {"unexpected": True})
+        if logger:
+            log_error(logger, error, {"unexpected": True})
         return APIResponse.error(
             message="An unexpected error occurred",
             status_code=500,

@@ -1,9 +1,10 @@
 import logging
 import sys
+import os
 import json
 from datetime import datetime
 from typing import Any, Dict, Optional, Union
-from flask import request, g
+from flask import request, g, current_app
 
 
 class CustomJSONFormatter(logging.Formatter):
@@ -45,10 +46,27 @@ def setup_logger(app_name: str = 'quiply', log_level: str = 'INFO') -> logging.L
     logger.setLevel(getattr(logging, log_level.upper()))
     
     if not logger.handlers:
-        handler = logging.StreamHandler(sys.stdout)
         formatter = CustomJSONFormatter()
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
+        
+        try:
+            log_file = current_app.config.get('LOG_FILE')
+            log_dir = current_app.config.get('LOG_DIR', 'logs')
+        except RuntimeError:
+            log_file = None
+            log_dir = 'logs'
+        
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
+        
+        if log_file:
+            if log_dir and not os.path.exists(log_dir):
+                os.makedirs(log_dir, exist_ok=True)
+            
+            log_path = os.path.join(log_dir, log_file)
+            file_handler = logging.FileHandler(log_path)
+            file_handler.setFormatter(formatter)
+            logger.addHandler(file_handler)
     
     return logger
 
