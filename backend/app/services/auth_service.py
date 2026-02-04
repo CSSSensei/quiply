@@ -42,3 +42,16 @@ class AuthService:
     @staticmethod
     def get_user_by_id(user_id: int) -> Optional[User]:
         return User.query.get(user_id)
+    
+    @staticmethod
+    def update_user(user_id: int, bio: Optional[str] = None) -> User:
+        user = User.query.get(user_id)
+        
+        if not user:
+            raise ValueError("User not found")
+        
+        if bio is not None:
+            user.bio = bio
+        
+        db.session.commit()
+        return user

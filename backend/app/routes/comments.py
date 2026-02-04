@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services.comment_service import CommentService
+from app.schemas import CommentCreateSchema
+from pydantic import ValidationError
 
 bp = Blueprint("comments", __name__)
 
@@ -29,11 +31,12 @@ def create_comment(quip_id: int):
     user_id = int(get_jwt_identity())
     data = request.get_json()
     
-    content = data.get("content")
-    parent_id = data.get("parent_id")
-    
-    if not content:
-        return jsonify({"error": "Content is required"}), 400
+    try:
+        validated_data = CommentCreateSchema(**data)
+        content = validated_data.content
+        parent_id = validated_data.parent_id
+    except ValidationError as e:
+        return jsonify({"error": "Validation failed", "details": e.errors()}), 400
     
     try:
         comment = CommentService.create(user_id, quip_id, content, parent_id)

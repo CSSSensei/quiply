@@ -2,7 +2,9 @@ import { api } from "../api.js";
 import { state } from "../state.js";
 import { getInitials, createEl, showToast } from "../utils.js";
 
-const MAX_LENGTH = 280;
+const MAX_CONTENT_LENGTH = 1000;
+const MAX_DEFINITION_LENGTH = 500;
+const MAX_EXAMPLES_LENGTH = 1000;
 
 export class CreateQuip {
   constructor(onCreated) {
@@ -21,7 +23,7 @@ export class CreateQuip {
     }
 
     const user = state.user;
-    const remaining = MAX_LENGTH - this.content.length;
+    const remaining = MAX_CONTENT_LENGTH - this.content.length;
 
     this.el = createEl("div", { className: "create-quip" }, [
       createEl("div", { className: "create-quip-header" }, [
@@ -36,6 +38,7 @@ export class CreateQuip {
         className: "create-quip-input form-textarea",
         placeholder: "Share a witty phrase, idiom, or quip...",
         value: this.content,
+        maxLength: MAX_CONTENT_LENGTH,
         onInput: (e) => {
           this.content = e.target.value;
           this.updateCounter();
@@ -85,27 +88,39 @@ export class CreateQuip {
       ),
       this.showExtras
         ? createEl("div", { className: "flex flex-col gap-md" }, [
-            createEl("input", {
-              className: "form-input",
-              type: "text",
-              placeholder: "Definition (optional)",
-              value: this.definition,
-              onInput: (e) => (this.definition = e.target.value),
-            }),
-            createEl("input", {
-              className: "form-input",
-              type: "text",
-              placeholder: "Usage example (optional)",
-              value: this.examples,
-              onInput: (e) => (this.examples = e.target.value),
-            }),
+            createEl("div", { className: "flex flex-col gap-sm" }, [
+              createEl("input", {
+                className: "form-input",
+                type: "text",
+                placeholder: "Definition (optional)",
+                value: this.definition,
+                maxLength: MAX_DEFINITION_LENGTH,
+                onInput: (e) => (this.definition = e.target.value),
+              }),
+              createEl("div", { className: "text-secondary text-sm" }, [
+                `${MAX_DEFINITION_LENGTH - this.definition.length} characters remaining`
+              ]),
+            ]),
+            createEl("div", { className: "flex flex-col gap-sm" }, [
+              createEl("input", {
+                className: "form-input",
+                type: "text",
+                placeholder: "Usage example (optional)",
+                value: this.examples,
+                maxLength: MAX_EXAMPLES_LENGTH,
+                onInput: (e) => (this.examples = e.target.value),
+              }),
+              createEl("div", { className: "text-secondary text-sm" }, [
+                `${MAX_EXAMPLES_LENGTH - this.examples.length} characters remaining`
+              ]),
+            ]),
           ])
         : null,
     ]);
   }
 
   updateCounter() {
-    const remaining = MAX_LENGTH - this.content.length;
+    const remaining = MAX_CONTENT_LENGTH - this.content.length;
     
     const counter = this.el?.querySelector(".create-quip-counter");
     if (counter) {

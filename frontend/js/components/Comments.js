@@ -3,6 +3,8 @@ import { state } from "../state.js";
 import { router } from "../router.js";
 import { formatTime, getInitials, escapeHtml, createEl, showToast } from "../utils.js";
 
+const MAX_COMMENT_LENGTH = 1000;
+
 export class Comments {
   constructor(quipId) {
     this.quipId = quipId;
@@ -184,19 +186,26 @@ export class Comments {
               ),
             ])
           : null,
-        createEl("textarea", {
-          className: "comment-form-input",
-          placeholder: "Write a comment...",
-          rows: 2,
-          value: this.newComment,
-          onInput: (e) => {
-            this.newComment = e.target.value;
-            const btn = this.el?.querySelector('.btn-primary');
-            if (btn) {
-              btn.disabled = !this.newComment.trim();
-            }
-          },
-        }),
+        createEl("div", { className: "flex flex-col gap-sm" }, [
+          createEl("textarea", {
+            className: "comment-form-input",
+            placeholder: "Write a comment...",
+            rows: 2,
+            value: this.newComment,
+            maxLength: MAX_COMMENT_LENGTH,
+            onInput: (e) => {
+              this.newComment = e.target.value;
+              this.updateCharacterCount();
+              const btn = this.el?.querySelector('.btn-primary');
+              if (btn) {
+                btn.disabled = !this.newComment.trim();
+              }
+            },
+          }),
+          createEl("div", { className: "text-secondary text-sm text-right" }, [
+            `${MAX_COMMENT_LENGTH - this.newComment.length} characters remaining`
+          ]),
+        ]),
       ]),
       createEl(
         "button",
@@ -227,6 +236,13 @@ export class Comments {
       this.update();
     } catch (err) {
       showToast(err.message, "error");
+    }
+  }
+
+  updateCharacterCount() {
+    const counter = this.el?.querySelector('.text-secondary.text-sm.text-right');
+    if (counter) {
+      counter.textContent = `${MAX_COMMENT_LENGTH - this.newComment.length} characters remaining`;
     }
   }
 

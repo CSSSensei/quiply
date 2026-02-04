@@ -59,11 +59,12 @@ export class RegisterPage {
             value: this.username,
             onInput: (e) => (this.username = e.target.value),
             required: true,
-            minLength: 3,
+            minLength: 5,
             maxLength: 20,
+            pattern: "[a-z0-9_]+",
           }),
           createEl("div", { className: "form-hint" }, [
-            "3-20 characters, letters and numbers only",
+            "5-20 characters, lowercase letters, numbers, and underscores only",
           ]),
         ]),
         createEl("div", { className: "form-group" }, [

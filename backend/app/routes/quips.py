@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services.quip_service import QuipService
+from app.schemas import QuipCreateSchema
+from pydantic import ValidationError
 
 bp = Blueprint("quips", __name__)
 
@@ -32,12 +34,13 @@ def create_quip():
     user_id = int(get_jwt_identity())
     data = request.get_json()
     
-    content = data.get("content")
-    definition = data.get("definition")
-    usage_examples = data.get("usage_examples")
-    
-    if not content:
-        return jsonify({"error": "Content is required"}), 400
+    try:
+        validated_data = QuipCreateSchema(**data)
+        content = validated_data.content
+        definition = validated_data.definition
+        usage_examples = validated_data.usage_examples
+    except ValidationError as e:
+        return jsonify({"error": "Validation failed", "details": e.errors()}), 400
     
     try:
         quip = QuipService.create(user_id, content, definition, usage_examples)
