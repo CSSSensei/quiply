@@ -30,17 +30,7 @@ def create_app(config_name: str = "default") -> Flask:
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
-    CORS(app)
-    
-    @app.before_request
-    def before_request():
-        try:
-            if hasattr(get_jwt_identity(), '__call__'):
-                user_id = get_jwt_identity()
-                if user_id:
-                    g.user_id = int(user_id)
-        except Exception:
-            pass
+    CORS(app, supports_credentials=True)
     
     @app.errorhandler(BaseAPIError)
     def handle_api_error(error):

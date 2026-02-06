@@ -56,12 +56,13 @@ class ApiClient {
       method: "POST",
       body: JSON.stringify({ username, password }),
     });
-    this.setToken(data.token);
+    this.setToken(data.data.token);
     return data;
   }
 
   async getMe() {
-    return this.request("/auth/me");
+    const response = await this.request("/auth/me");
+    return response;
   }
 
   logout() {
